@@ -25,7 +25,7 @@ h1{font-size:30px;line-height:1.08;letter-spacing:-1.1px;margin:7px 0 0;font-wei
 .sectionhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.sectionhead h2{font-size:16px;margin:0;font-weight:850;letter-spacing:-.3px}.step{font-size:11px;color:var(--blue);font-weight:850;background:#EEEEFF;border-radius:7px;padding:5px 8px}
 label{display:block;font-size:12px;font-weight:800;color:#3F414B;margin:0 0 7px}
 input{width:100%;height:48px;border:1.5px solid var(--line);border-radius:12px;padding:0 13px;background:white;color:var(--ink);outline:none;font-weight:650}
-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,23,245,.1)}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,23,245,.1)}input[readonly]{cursor:default;caret-color:transparent}
 .service-picker{position:relative;z-index:2}.service-trigger{width:100%;height:48px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--line);border-radius:12px;padding:0 14px;background:rgba(255,255,255,.88);color:var(--ink);font-weight:700;text-align:left;transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease}
 .service-trigger:focus-visible{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,23,245,.12)}.service-trigger:active{transform:scale(.995)}
 .service-chevron{width:9px;height:9px;border-right:2px solid #737583;border-bottom:2px solid #737583;transform:rotate(45deg) translateY(-2px);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
@@ -48,7 +48,7 @@ input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,23,245,.1)}
 .pill{font-size:11px;font-weight:750;padding:7px 9px;border-radius:8px;background:#292A33;color:#E7E7EB}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .primary,.secondary{height:48px;border-radius:12px;border:0;font-weight:850;transition:transform .18s cubic-bezier(.2,.8,.2,1),filter .18s ease}.primary:active,.secondary:active{transform:scale(.98);filter:brightness(.97)}
-.primary{background:var(--yellow);color:#111}.secondary{background:#EEEEFF;color:var(--blue)}
+.primary{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--yellow);color:#111}.secondary{background:#EEEEFF;color:var(--blue)}
 .note{font-size:11px;color:#777986;text-align:center;line-height:1.5;padding:4px 12px 18px}
 .tabrow{display:flex;gap:8px;overflow:auto;margin-bottom:14px}.tab{white-space:nowrap;border:1px solid var(--line);background:white;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:800;color:#555}.tab.active{background:var(--blue);color:white;border-color:var(--blue)}
 .rate-list{display:grid;gap:10px}.rateitem{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.rateitem:last-child{border:0}.rateitem strong{font-size:13px}.rateitem small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.rate-value{font-size:14px;font-weight:850;color:var(--blue);white-space:nowrap}
@@ -90,7 +90,7 @@ input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,23,245,.1)}
     </div>
     <div class="grid2">
       <div class="field"><label for="quantity">Quantity</label><input id="quantity" type="number" min="1" step="1" value="1" inputmode="numeric"></div>
-      <div class="field"><label for="currency">Currency</label><input id="currency" value="GH₵" maxlength="5"></div>
+      <div class="field"><label for="currency">Currency</label><input id="currency" value="GH₵" readonly aria-readonly="true"></div>
     </div>
     <div class="hint" id="areaHint">Area: 1.56 square feet</div>
   </div>
@@ -134,9 +134,10 @@ const defaults = [
 ];
 let rates = defaults.map(d=>({...d})), unit='in', deferredInstallPrompt=null, installDismissedThisVisit=false;
 const $=id=>document.getElementById(id);
+const CHECK_ICON='<svg class="selected-check" aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function active(){return rates.find(x=>x.id===$('service').value)||rates[0]}
 function fmt(n){return Number(n||0).toLocaleString('en-GH',{minimumFractionDigits:2,maximumFractionDigits:2})}
-function renderServices(){ $('serviceMenu').innerHTML=rates.map(r=>`<button class="service-option" type="button" role="option" aria-selected="${r.id===$('service').value}" data-service="${r.id}">${r.name}${r.id===$('service').value?'<svg class="selected-check" aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</button>`).join('')}
+function renderServices(){ $('serviceMenu').innerHTML=rates.map(r=>`<button class="service-option" type="button" role="option" aria-selected="${r.id===$('service').value}" data-service="${r.id}">${r.name}${r.id===$('service').value?CHECK_ICON:''}</button>`).join('')}
 function closeServiceMenu(returnFocus=false){$('serviceMenu').classList.remove('open');$('serviceTrigger').setAttribute('aria-expanded','false');if(returnFocus)$('serviceTrigger').focus()}
 function populate(){ $('service').value='banner';$('serviceValue').textContent=active().name;renderServices();renderRates();calculate()}
 function calculate(){
@@ -157,7 +158,7 @@ document.addEventListener('click',e=>{if(!$('servicePicker').contains(e.target))
 $('openSettings').onclick=()=>{$('settingsModal').classList.add('open')};
 $('closeSettings').onclick=()=>$('settingsModal').classList.remove('open');
 $('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))$('settingsModal').classList.remove('open')});
-$('copyQuote').onclick=async()=>{const s=active(),q=Math.max(0,Math.floor(Number($('quantity').value)||0)),cur=$('currency').value.trim()||'GH₵',w=$('width').value,h=$('height').value,size=s.unit==='area'?`${w} × ${h} ${unit==='in'?'inches':'feet'}`:'A4/A3 sheet pricing';const txt=`MARK N ECHO\nPRINT QUOTATION\nService: ${s.name}\nSize: ${size}\nQuantity: ${q}\nTotal: ${$('total').textContent}`;try{await navigator.clipboard.writeText(txt);$('copyQuote').textContent='Copied ✓';setTimeout(()=>$('copyQuote').textContent='Copy quotation',1600)}catch{$('copyQuote').textContent='Copy unavailable';setTimeout(()=>$('copyQuote').textContent='Copy quotation',1600)}};
+$('copyQuote').onclick=async()=>{const s=active(),q=Math.max(0,Math.floor(Number($('quantity').value)||0)),cur=$('currency').value.trim()||'GH₵',w=$('width').value,h=$('height').value,size=s.unit==='area'?`${w} × ${h} ${unit==='in'?'inches':'feet'}`:'A4/A3 sheet pricing';const txt=`MARK N ECHO\nPRINT QUOTATION\nService: ${s.name}\nSize: ${size}\nQuantity: ${q}\nTotal: ${$('total').textContent}`;try{await navigator.clipboard.writeText(txt);$('copyQuote').innerHTML='Copied '+CHECK_ICON;setTimeout(()=>$('copyQuote').textContent='Copy quotation',1600)}catch{$('copyQuote').textContent='Copy unavailable';setTimeout(()=>$('copyQuote').textContent='Copy quotation',1600)}};
 $('reset').onclick=()=>{$('width').value=15;$('height').value=15;$('quantity').value=1;unit='in';document.querySelectorAll('[data-unit]').forEach(b=>b.classList.toggle('active',b.dataset.unit==='in'));calculate()};
 function appInstalled(){try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true||localStorage.getItem('mne_installed')==='true'}catch{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}}
 function hideInstallBanner(){ $('installBanner').classList.remove('visible');$('installBanner').setAttribute('aria-hidden','true')}
