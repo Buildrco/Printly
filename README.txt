@@ -1,4 +1,4 @@
-MARK N ECHO — PRINT CALCULATOR
+MARK N ECHO — PRINT CALCULATOR (Printly)
 
 FILES
 - index.html: complete calculator; can be opened locally and used offline.
@@ -9,5 +9,5 @@ A browser PWA must be delivered from a secure website (HTTPS) or localhost befor
 For immediate offline use, open index.html locally. For the installable PWA, publish this folder to an HTTPS host once, open it in Chrome/Safari, then use Add to Home Screen / Install. After its first successful visit, the service worker caches the app for offline use.
 
 PRICES
-Starter sample rates are illustrative Ghana market estimates, not confirmed company selling prices. Open Prices in the app to edit rates. Large-format rates are per square foot. Paper print/copy rates are per sheet.
+Starter rates are illustrative Ghana market estimates, not confirmed company selling prices. Open Prices in the app to edit rates. Large-format rates are per square foot. Paper print/copy rates are per sheet.
 Rates are saved locally in the browser/device and are not synchronized between devices.
