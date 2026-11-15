@@ -34,7 +34,7 @@ input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,23,245,.1)}
 .service-menu.open{display:block;animation:menuDrop .2s cubic-bezier(.2,.8,.2,1) both}
 @keyframes menuDrop{from{opacity:0;transform:translateY(-7px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
 .service-option{display:flex;width:100%;min-height:44px;align-items:center;justify-content:space-between;border:0;border-radius:11px;padding:10px 12px;background:transparent;color:#20212a;text-align:left;font-size:13px;font-weight:650;transition:background .16s ease,color .16s ease,transform .16s ease}
-.service-option:hover,.service-option:focus-visible{outline:0;background:rgba(255,255,255,.76)}.service-option:active{transform:scale(.99)}.service-option[aria-selected="true"]{background:rgba(23,23,245,.1);color:var(--blue);font-weight:800}
+.service-option:hover,.service-option:focus-visible{outline:0;background:rgba(255,255,255,.76)}.service-option:active{transform:scale(.99)}.service-option[aria-selected="true"]{background:rgba(23,23,245,.1);color:var(--blue);font-weight:800}.selected-check{width:16px;height:16px;flex:none}
 .field{margin-bottom:14px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.units{display:flex;background:#F0F1F6;border-radius:11px;padding:4px;gap:4px}
 .units button{flex:1;border:0;background:transparent;color:#555766;border-radius:8px;padding:9px;font-size:12px;font-weight:850}
 .units button{transition:transform .18s cubic-bezier(.2,.8,.2,1),background .18s ease,color .18s ease}.units button:active{transform:scale(.97)}.units button.active{background:var(--blue);color:white;box-shadow:0 3px 8px rgba(23,23,245,.2)}
@@ -72,7 +72,7 @@ input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,23,245,.1)}
 <body>
 <div class="app">
 <header class="top">
-  <div class="brandrow"><div><img class="brandlogo" src="assets/mark-echo-logo.png" alt="Mark & Echo"><div class="brandtag">Print & Creative Studio</div></div></div>
+  <div class="brandrow"><div><img class="brandlogo" src="assets/mark-echo-logo.png" alt="Mark & Echo"></div></div>
   <div class="topline"><div><div class="eyebrow">Quick pricing tool</div><h1>Print calculator.</h1></div><button class="settings" id="openSettings">⚙ Prices</button></div>
 </header>
 <main class="content">
@@ -101,12 +101,12 @@ input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,23,245,.1)}
   </section>
   <div class="actions"><button class="primary" id="copyQuote">Copy quotation</button><button class="secondary" id="reset">Reset size</button></div>
 </main>
-<div class="note">MARK N ECHO · INTERNAL PRICING TOOL<br>Prices are set by the developer. Contact the developer to request a price change.</div>
+
 </div>
 <div class="modalback" id="settingsModal">
  <section class="modal">
   <div class="modalhead"><div><div class="eyebrow" style="color:#1717F5">Company prices</div><h2>View prices</h2></div><button class="close" id="closeSettings" aria-label="Close prices">×</button></div>
-  <p class="hint" style="margin:0 0 14px">Prices are set by the developer and can’t be changed here. Contact the developer to request a price change. Large-format rates are per square foot; A4/A3 rates are per sheet.</p>
+  <p class="hint" style="margin:0 0 14px">Large-format rates are per square foot; A4/A3 rates are per sheet.</p>
   <div class="rate-list" id="rateList"></div>
  </section>
 </div>
@@ -126,18 +126,17 @@ const defaults = [
  {id:'sav',name:'SAV sticker',unit:'area',rate:4.20,hint:'Self-adhesive vinyl · price per square foot'},
  {id:'clear',name:'Transparent sticker',unit:'area',rate:7.70,hint:'Transparent sticker · price per square foot'},
  {id:'oneway',name:'One-way vision',unit:'area',rate:8.70,hint:'Perforated window film · price per square foot'},
- {id:'cut',name:'Sticker print & cut',unit:'area',rate:7.70,hint:'Printed and cut sticker · price per square foot'},
- {id:'bw',name:'A4 black & white print',unit:'sheet',rate:0.50,hint:'Per A4 sheet · dimensions are not used'},
- {id:'copy',name:'A4 black & white photocopy',unit:'sheet',rate:0.75,hint:'Per A4 sheet · dimensions are not used'},
+ {id:'bw',name:'A4 black & white print',unit:'sheet',rate:1.00,hint:'Per A4 sheet · dimensions are not used'},
+ {id:'copy',name:'A4 black & white photocopy',unit:'sheet',rate:1.00,hint:'Per A4 sheet · dimensions are not used'},
  {id:'colour',name:'A4 colour print',unit:'sheet',rate:2.25,hint:'Per A4 sheet · dimensions are not used'},
- {id:'a3bw',name:'A3 black & white print',unit:'sheet',rate:1.00,hint:'Per A3 sheet · dimensions are not used'},
+ {id:'a3bw',name:'A3 black & white print',unit:'sheet',rate:1.50,hint:'Per A3 sheet · dimensions are not used'},
  {id:'a3colour',name:'A3 colour print',unit:'sheet',rate:4.00,hint:'Per A3 sheet · dimensions are not used'}
 ];
 let rates = defaults.map(d=>({...d})), unit='in', deferredInstallPrompt=null, installDismissedThisVisit=false;
 const $=id=>document.getElementById(id);
 function active(){return rates.find(x=>x.id===$('service').value)||rates[0]}
 function fmt(n){return Number(n||0).toLocaleString('en-GH',{minimumFractionDigits:2,maximumFractionDigits:2})}
-function renderServices(){ $('serviceMenu').innerHTML=rates.map(r=>`<button class="service-option" type="button" role="option" aria-selected="${r.id===$('service').value}" data-service="${r.id}">${r.name}${r.id===$('service').value?'<span aria-hidden="true">✓</span>':''}</button>`).join('')}
+function renderServices(){ $('serviceMenu').innerHTML=rates.map(r=>`<button class="service-option" type="button" role="option" aria-selected="${r.id===$('service').value}" data-service="${r.id}">${r.name}${r.id===$('service').value?'<svg class="selected-check" aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</button>`).join('')}
 function closeServiceMenu(returnFocus=false){$('serviceMenu').classList.remove('open');$('serviceTrigger').setAttribute('aria-expanded','false');if(returnFocus)$('serviceTrigger').focus()}
 function populate(){ $('service').value='banner';$('serviceValue').textContent=active().name;renderServices();renderRates();calculate()}
 function calculate(){
