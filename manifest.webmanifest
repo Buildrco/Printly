@@ -10,8 +10,14 @@
   "theme_color": "#1717F5",
   "icons": [
     {
+      "src": "assets/mark-echo-app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "assets/mark-echo-app-icon.png",
-      "sizes": "1080x1080",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
